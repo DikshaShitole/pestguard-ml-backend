@@ -26,7 +26,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 try:
     model = tf.keras.models.load_model(
-        os.path.join(BASE_DIR, "pestguard_cotton_model (1).h5")
+        os.path.join(BASE_DIR, "pestguard_cotton_model.h5")
     )
 except Exception as e:
     print("MODEL_LOAD_ERROR")
