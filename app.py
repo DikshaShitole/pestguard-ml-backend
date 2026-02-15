@@ -50,7 +50,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 # =========================
 # PREDICT API
 # =========================
-UPLOAD_FOLDER = os.path.join(BASE_DIR, "static/uploads")
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -81,7 +81,7 @@ def predict():
         return jsonify({
             "prediction": pest_name,
             "confidence": confidence,
-            "image": "static/uploads/" + unique_name
+            
         })
 
     except Exception as e:
