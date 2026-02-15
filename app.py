@@ -44,13 +44,13 @@ classes = [
     "Target Spot"
 ]
 
-UPLOAD_FOLDER = os.path.join(BASE_DIR, "static/uploads")
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # =========================
 # PREDICT API
 # =========================
-UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
+
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -79,10 +79,9 @@ def predict():
         confidence = float(np.max(prediction))
 
         return jsonify({
-            "prediction": pest_name,
-            "confidence": confidence,
-            
-        })
+    "prediction": pest_name,
+    "confidence": confidence
+})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
