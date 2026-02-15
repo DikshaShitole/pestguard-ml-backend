@@ -16,13 +16,17 @@ os.environ["TF_NUM_INTEROP_THREADS"] = "1"
 
 logging.getLogger("absl").setLevel(logging.ERROR)
 
+# Disable GPU (important for Render)
+tf.config.set_visible_devices([], 'GPU')
+
 app = Flask(__name__)
 
 # =========================
-# LOAD MODEL ON START
+# LOAD MODEL LAZY
 # =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "pestguard_cotton_model.h5")
+
 model = None
 
 def get_model():
@@ -65,13 +69,12 @@ def predict():
         img_array = np.expand_dims(img_array, axis=0) / 255.0
 
         model = get_model()
+
         prediction = model.predict(img_array, verbose=0)
         predicted_index = int(np.argmax(prediction))
 
         pest_name = classes[predicted_index]
         confidence = float(np.max(prediction))
-
-        os.remove(file_path)
 
         return jsonify({
             "prediction": pest_name,
@@ -81,7 +84,19 @@ def predict():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+    finally:
+        if os.path.exists(file_path):
+            os.remove(file_path)
 
+# =========================
+# HOME ROUTE
+# =========================
 @app.route("/")
 def home():
     return "PestGuard ML API Running"
+
+# =========================
+# LOCAL RUN
+# =========================
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
