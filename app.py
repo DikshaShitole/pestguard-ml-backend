@@ -23,8 +23,13 @@ app = Flask(__name__)
 # =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "pestguard_cotton_model.h5")
+model = None
 
-model = tf.keras.models.load_model(MODEL_PATH)
+def get_model():
+    global model
+    if model is None:
+        model = tf.keras.models.load_model(MODEL_PATH)
+    return model
 
 classes = [
     "Aphids",
@@ -59,6 +64,7 @@ def predict():
         img_array = image.img_to_array(img)
         img_array = np.expand_dims(img_array, axis=0) / 255.0
 
+        model = get_model()
         prediction = model.predict(img_array, verbose=0)
         predicted_index = int(np.argmax(prediction))
 
