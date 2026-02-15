@@ -43,7 +43,6 @@ def predict():
 
     file = request.files["file"]
 
-    # Generate unique filename
     unique_name = str(uuid.uuid4()) + ".jpg"
     file_path = os.path.join(UPLOAD_FOLDER, unique_name)
 
@@ -56,14 +55,20 @@ def predict():
 
         prediction = model.predict(img_array, verbose=0)
         predicted_index = int(np.argmax(prediction))
+
         pest_name = classes[predicted_index]
+        confidence = float(np.max(prediction))
 
-        os.remove(file_path)  # delete after use
+        os.remove(file_path)
 
-        return jsonify({"pest": pest_name})
+        return jsonify({
+            "prediction": pest_name,
+            "confidence": confidence
+        })
 
     except Exception:
         return jsonify({"error": "Prediction failed"}), 500
+
 
 
 # =========================
