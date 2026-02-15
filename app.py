@@ -6,8 +6,14 @@ import numpy as np
 from tensorflow.keras.preprocessing import image
 import uuid
 
-# Suppress TensorFlow warnings
+# =========================
+# Reduce TensorFlow Memory Usage
+# =========================
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["TF_NUM_INTRAOP_THREADS"] = "1"
+os.environ["TF_NUM_INTEROP_THREADS"] = "1"
+
 logging.getLogger("absl").setLevel(logging.ERROR)
 
 app = Flask(__name__)
@@ -66,21 +72,10 @@ def predict():
             "confidence": confidence
         })
 
-    except Exception:
-        return jsonify({"error": "Prediction failed"}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
-
-# =========================
-# HOME ROUTE
-# =========================
 @app.route("/")
 def home():
     return "PestGuard ML API Running"
-
-
-# =========================
-# RUN SERVER
-# =========================
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
